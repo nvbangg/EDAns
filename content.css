@@ -1,0 +1,32 @@
+.buttonX {
+   display: block; 
+   position: relative;
+   line-height: 10px;
+   width: 100px;
+   height: 100px;
+   font-size: 8pt;
+   z-index: 1000px;
+   font-family: tahoma;
+}
+.carry
+{
+   display: block;
+   position: fixed;
+   top: 60px;
+   left: 10px;
+   z-index: 1000px;
+   
+}
+.ansShow{
+   position: fixed; 
+   display: block;
+   font-size: 15pt;
+   font-family: tahoma;
+   background-color: white;
+   border-width:2px;
+   border-style:solid;
+   border-color:black;
+   padding-bottom : 2px;
+   z-index: 1000px;
+   
+}

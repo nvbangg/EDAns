@@ -1,0 +1,22 @@
+{
+    "manifest_version": 2,
+    "name": "ED Ans",
+    "version": "0.2",
+    "permissions": ["desktopCapture", "webRequestBlocking", "activeTab", "tabs", "storage", "cookies", "webRequest", "<all_urls>", "http://*/*", "https://*/*"],
+    "content_scripts": [{
+        "matches": [
+            "https://*.engdis.com/*"
+        ],
+
+        "run_at": "document_idle",
+        "js": ["content.js"],
+        "css":["content.css"]
+    }],
+
+
+    "background": {
+        "scripts": ["background.js"],
+        "persistent": true
+    }
+
+}
