@@ -2,18 +2,19 @@
    display: block; 
    position: relative;
    line-height: 10px;
-   width: 100px;
-   height: 100px;
+   width: 80px;
+   height: 50px;
    font-size: 8pt;
    z-index: 1000px;
    font-family: tahoma;
+   background-color: lightgreen;
 }
 .carry
 {
    display: block;
    position: fixed;
    top: 60px;
-   left: 10px;
+   left: 310px;
    z-index: 1000px;
    
 }

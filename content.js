@@ -7,8 +7,7 @@ document.addEventListener('keydown', addEv, false);
 
 async function addEv(e)
 {
-  if (e.keyCode == 32) getAns(); //Space
-  //Z
+  if (e.keyCode == 32) getAns();
 
 };
 
@@ -68,6 +67,7 @@ document.addEventListener('keydown', function(event)
   if (event.keyCode === 39)
   {
     document.getElementById('learning__nextItem').click();
+    setTimeout(getAns, 500);
   }
 });
 
@@ -83,8 +83,8 @@ document.addEventListener('keydown', function(event)
     setTimeout(function()
     {
       document.getElementById('learning__nextItem').click();
-
-    }, 300);
+      setTimeout(getAns, 500);
+    }, 500);
   }
 });
 
@@ -173,7 +173,7 @@ document.body.appendChild(sumElement);
 sumElement.classList = 'carry';
 
 var btn0 = document.createElement('button');
-btn0.innerHTML = 'Ans';
+btn0.innerHTML = 'Get answer';
 btn0.classList = 'buttonX';
 sumElement.appendChild(btn0);
 btn0.onclick = function()
@@ -181,15 +181,6 @@ btn0.onclick = function()
   getAns();
 };
 
-const checkbox = document.createElement('input');
-checkbox.type = 'checkbox';
-checkbox.style.width = '30px';
-checkbox.style.height = '30px';
-sumElement.appendChild(checkbox);
-checkbox.addEventListener('change', function(event)
-{
-  isTest = event.target.checked;
-});
 var ansShow = document.createElement('div');
 sumElement.appendChild(ansShow);
 ansShow.classList = 'ansShow';

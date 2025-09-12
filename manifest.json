@@ -1,7 +1,7 @@
 {
     "manifest_version": 2,
     "name": "ED Ans",
-    "version": "0.2",
+    "version": "0.3",
     "permissions": ["desktopCapture", "webRequestBlocking", "activeTab", "tabs", "storage", "cookies", "webRequest", "<all_urls>", "http://*/*", "https://*/*"],
     "content_scripts": [{
         "matches": [
