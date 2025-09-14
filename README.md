@@ -1,29 +1,21 @@
 # EDAns - Extension lấy đáp án ED và TOEIC
 
 ## Cài đặt
-1. Tải repository này về 
-2. Mở Edge và truy cập `chrome://extensions/`
-    (lưu ý dùng edge hoặc trình duyệt hỗ trợ mv2, trong chrome xem cách dưới)
+1. Download [EDAns.zip](https://github.com/nvbangg/EDAns/releases) và giải nén
+2. Mở trình duyệt và truy cập `chrome://extensions/`
 2. Bật **Developer Mode**
-3. Nhấn **Load unpacked** 
-4. Chọn thư mục `EDAns`
-
-### Đối với **Google Chrome**, cần bật hỗ trợ MV2:
-1. Truy cập `chrome://flags`
-2. Tìm và bật các flag sau:
-   - `Temporarily unexpire M138 flags`
-   - `Temporarily unexpire M139 flags`
-3. Nhấn Relaunch lại chrome, sau đó vào lại Bật tiếp:
-   - `Allow legacy extension manifest versions`
-4. Relaunch lại chrome Chrome lần nữa
+3. Nhấn **Load unpacked** và Chọn thư mục `EDAns`
 
 ## Hướng dẫn 
-- Nhấn `Space` hoặc chọn `Get Answer` để xem đáp án (tự động show đáp án khi chuyển câu)
-- Nhấn  `Z` để tự động chọn ngẫu nghiên (phần explore và practice) và chuyển câu
-- nhấn `→` để Chuyển câu (trong phần Test)
+- Nhấn `Z` để tự động chọn và chuyển câu (dùng trong phần Explore và Practice)
+- Nhấn `Space` để Chuyển câu (dùng trong phần Test)
+- Đáp án tự động hiển thị sau khi chuyển câu bằng `Z`, `Space`
+- Click `Get Answer` để hiển thị đáp án thủ công
 
-## Follow me👀 and Star⭐ 
- **Follow👀:** [![Follow](https://img.shields.io/github/followers/nvbangg?label=Follow&style=social)](https://github.com/nvbangg) | **Star⭐:** [![Star](https://img.shields.io/github/stars/nvbangg/nvbangg-tools?style=social)](https://github.com/nvbangg/nvbangg-tools)
+*** Các Tools khác: https://github.com/nvbangg/nvbangg-tools ***
+
+## Follow me❤️ and Star⭐  
+ **Follow❤️:** [![Follow](https://img.shields.io/github/followers/nvbangg?label=Follow&style=social)](https://github.com/nvbangg) | **Star⭐:** [![Star](https://img.shields.io/github/stars/nvbangg/EDAns?style=social)](https://github.com/nvbangg/EDAns)
 
 ![Gif](https://raw.githubusercontent.com/nvbangg/nvbangg/main/data/star_follow.gif)
 

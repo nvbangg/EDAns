@@ -4,17 +4,19 @@
    line-height: 10px;
    width: 80px;
    height: 50px;
-   font-size: 8pt;
+   font-size: 12pt;
    z-index: 1000px;
    font-family: tahoma;
    background-color: lightgreen;
+   cursor: pointer;
+   user-select: none;
 }
 .carry
 {
    display: block;
    position: fixed;
-   top: 60px;
-   left: 310px;
+   top: 70px;
+   left: 300px;
    z-index: 1000px;
    
 }

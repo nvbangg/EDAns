@@ -1,25 +1,10 @@
-var x = document.cookie;
-var f = x.indexOf('^Token*');
-var e = x.indexOf('^UserName');
-var token = x.substr(f + 7, e - f - 7);
 let isTest = false;
-document.addEventListener('keydown', addEv, false);
 
-async function addEv(e)
-{
-  if (e.keyCode == 32) getAns();
-
-};
-
-let itemList = [];
-
-async function getAns()
-{
+async function getAns() {
   chrome.runtime.sendMessage({
     type: 'ansUrl',
     request: 'none',
-  }, async function(datax)
-  {
+  }, async function(datax) {
     console.clear();
     console.log(datax);
     let data = datax['aRequest'];
@@ -29,24 +14,18 @@ async function getAns()
       'headers': {
         'Authorization': autho,
       },
-
     });
-    await res.json().then(async function(dat)
-    {
+    
+    await res.json().then(async function(dat) {
       let qs = dat['i']['q'];
       var sw = '';
-      for (var i = 0; i < qs.length; i++)
-      {
+      for (var i = 0; i < qs.length; i++) {
         let ch = qs[i]['al'];
-        for (var j = 0; j < ch.length; j++)
-        {
+        for (var j = 0; j < ch.length; j++) {
           aAns = ch[j]['a'];
-          for (var k = 0; k < aAns.length; k++)
-          {
+          for (var k = 0; k < aAns.length; k++) {
             let op = aAns[k];
-
-            if (!op['c'] || op['c'] == '1')
-            {
+            if (!op['c'] || op['c'] == '1') {
               console.log(j + 1 + ' ' + op['txt']);
               sw += op['txt'] + '<br>';
             }
@@ -54,65 +33,47 @@ async function getAns()
         }
       }
       ansShow.innerHTML = sw;
-
     });
-
   });
-
 }
-document.body.addEventListener('mouseup', nextPage)
 
-document.addEventListener('keydown', function(event)
-{
-  if (event.keyCode === 39)
-  {
-    document.getElementById('learning__nextItem').click();
-    setTimeout(getAns, 500);
+function goToNextItem() {
+  document.getElementById('learning__nextItem').click();
+  setTimeout(getAns, 500);
+}
+
+function addEv(e) {
+  if (e.keyCode == 32) {
+    goToNextItem();
   }
-});
+}
 
-document.addEventListener('keydown', function(event)
-{
-  if (event.keyCode === 90)
-  {
-    if (!isTest)
-    {
+document.addEventListener('keydown', addEv, false);
+
+document.addEventListener('keydown', function(event) {
+  if (event.keyCode === 90) {
+    if (!isTest) {
       completeCurrent();
       tryFinish();
     }
-    setTimeout(function()
-    {
-      document.getElementById('learning__nextItem').click();
-      setTimeout(getAns, 500);
-    }, 500);
+    setTimeout(goToNextItem, 500);
   }
 });
 
-function nextPage(e)
-{
-  if (typeof e === 'object')
-  {
-    if (e.button == 4)
-    {
-      document.getElementById('learning__nextItem').click();
-    }
-  }
-}
 
-function completeCurrent()
-{
+function completeCurrent() {
   chrome.runtime.sendMessage({
     type: 'completeTask',
     request: 'none',
-  }, function(passData)
-  {
-    courseId = passData['courseId'];
-    itemId = passData['itemId'];
-    autho = passData['autho'];
-    url = 'https://eduiwebservices21.engdis.com/api/Progress/SetProgressPerTask';
-    body = '{"CourseId":' + courseId + ',"ItemId": ' + itemId + '}';
+  }, function(passData) {
+    const courseId = passData['courseId'];
+    const itemId = passData['itemId'];
+    const autho = passData['autho'];
+    const url = 'https://eduiwebservices21.engdis.com/api/Progress/SetProgressPerTask';
+    const body = '{"CourseId":' + courseId + ',"ItemId": ' + itemId + '}';
     console.log(body + ' ' + autho);
-    let res = fetch(url, {
+    
+    fetch(url, {
       'headers': {
         'Authorization': autho,
         'content-type': 'application/json',
@@ -120,67 +81,100 @@ function completeCurrent()
       'body': body,
       'method': 'POST',
       'accept': 'application/json, text/plain, */*',
-
     });
-
   });
 }
 
-function tryFinish()
-{
-  let e1 = document.getElementById('CTrackerPlayBtn');
-  if (e1 !== null && e1 !== undefined)
-  {
-    e1.click();
-    setTimeout(function()
-    {
-      e1.click();
-    }, 200);
+function clickElement(selector, delay = 0) {
+  const element = typeof selector === 'string' ? 
+    document.querySelector(selector) : selector;
+  if (element) {
+    setTimeout(() => element.click(), delay);
+    return true;
   }
-  let e2 = document.getElementById('play-pause');
-  if (e2 !== null && e2 !== undefined)
-  {
-    e2.click();
-    setTimeout(function()
-    {
-      e2.click();
-    }, 200);
-  }
-  r1 = document.getElementById('question-1_answer-1');
-  if (r1 !== null && r1 !== undefined) r1.click();
-  r2 = document.getElementsByClassName('multiRadio')[0];
-  if (r2 !== null && r2 !== undefined) r2.click();
-
-  s1 = document.getElementsByClassName('learning__selectTxt_st')[0];
-  if (s1 !== null && s1 !== undefined) s1.click();
-
-  s2 = document.getElementsByClassName('DDLOptions__selected')[0];
-  if (s2 !== null && s2 !== undefined)
-  {
-    s2.click();
-    setTimeout(function()
-    {
-      s2_1 = document.getElementsByClassName('DDLOptions__listItem')[0];
-      if (s2_1 !== null && s2_1 !== undefined) s2_1.click();
-    }, 100);
-
-  }
-
+  return false;
 }
 
-var sumElement = document.createElement('div');
-document.body.appendChild(sumElement);
-sumElement.classList = 'carry';
+function tryFinish() {
+  clickElement('#CTrackerPlayBtn');
+  setTimeout(() => clickElement('#CTrackerPlayBtn'), 200);
+  
+  clickElement('#play-pause');
+  setTimeout(() => clickElement('#play-pause'), 200);
+  
+  clickElement('#question-1_answer-1');
+  clickElement('.multiRadio');
+  clickElement('.learning__selectTxt_st');
+  
+  if (clickElement('.DDLOptions__selected')) {
+    setTimeout(() => clickElement('.DDLOptions__listItem'), 100);
+  }
+}
 
-var btn0 = document.createElement('button');
+let clickTimer = null;
+let isDragging = false;
+let dragOffsetX = 0;
+let dragOffsetY = 0;
+let dragModeEnabled = false;
+
+const sumElement = document.createElement('div');
+sumElement.classList = 'carry';
+document.body.appendChild(sumElement);
+
+const btn0 = document.createElement('button');
 btn0.innerHTML = 'Get answer';
 btn0.classList = 'buttonX';
 sumElement.appendChild(btn0);
-btn0.onclick = function()
-{
-  getAns();
+
+const ansShow = document.createElement('div');
+ansShow.classList = 'ansShow';
+sumElement.appendChild(ansShow);
+
+btn0.onclick = function(e) {
+  if (clickTimer) {
+    clearTimeout(clickTimer);
+    clickTimer = null;
+    return;
+  }
+  
+  clickTimer = setTimeout(() => {
+    getAns();
+    clickTimer = null;
+  }, 300);
 };
 
-var ansShow = document.createElement('div');
-sumElement.appendChild(ansShow);
-ansShow.classList = 'ansShow';
+btn0.addEventListener('dblclick', function(e) {
+  dragModeEnabled = true;
+  btn0.style.backgroundColor = 'orange';
+  btn0.style.cursor = 'move';
+  setTimeout(() => {
+    dragModeEnabled = false;
+    btn0.style.backgroundColor = 'lightgreen';
+    btn0.style.cursor = 'pointer';
+  }, 3000);
+  e.preventDefault();
+});
+
+btn0.addEventListener('mousedown', function(e) {
+  if (e.button === 0 && dragModeEnabled) {
+    isDragging = true;
+    const rect = sumElement.getBoundingClientRect();
+    dragOffsetX = e.clientX - rect.left;
+    dragOffsetY = e.clientY - rect.top;
+    e.preventDefault();
+  }
+});
+
+document.addEventListener('mousemove', function(e) {
+  if (isDragging && dragModeEnabled) {
+    sumElement.style.left = (e.clientX - dragOffsetX) + 'px';
+    sumElement.style.top = (e.clientY - dragOffsetY) + 'px';
+    e.preventDefault();
+  }
+});
+
+document.addEventListener('mouseup', function(e) {
+  if (isDragging) {
+    isDragging = false;
+  }
+});
