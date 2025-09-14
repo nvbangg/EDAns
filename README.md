@@ -1,4 +1,5 @@
 # EDAns - Extension lấy đáp án ED và TOEIC
+Các Tools khác: https://github.com/nvbangg/nvbangg-tools 
 
 ## Cài đặt
 1. Download [EDAns.zip](https://github.com/nvbangg/EDAns/releases) và giải nén
@@ -12,7 +13,6 @@
 - Đáp án tự động hiển thị sau khi chuyển câu bằng `Z`, `Space`
 - Click `Get Answer` để hiển thị đáp án thủ công
 
-*** Các Tools khác: https://github.com/nvbangg/nvbangg-tools ***
 
 ## Follow me❤️ and Star⭐  
  **Follow❤️:** [![Follow](https://img.shields.io/github/followers/nvbangg?label=Follow&style=social)](https://github.com/nvbangg) | **Star⭐:** [![Star](https://img.shields.io/github/stars/nvbangg/EDAns?style=social)](https://github.com/nvbangg/EDAns)
