@@ -1,4 +1,4 @@
-# EDAns - Extension lấy đáp án ED và TOEIC
+# EDAns - Extension tự động làm nhanh ED và TOEIC
 Các Tools khác: https://github.com/nvbangg/nvbangg-tools 
 
 ## Cài đặt
