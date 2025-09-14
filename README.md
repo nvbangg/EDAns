@@ -14,7 +14,7 @@ Các Tools khác: https://github.com/nvbangg/nvbangg-tools
 - Click `Get Answer` để hiển thị đáp án thủ công
 
 
-## Follow me❤️ [![Followers](https://img.shields.io/github/followers/nvbangg)](https://github.com/nvbangg) and Star⭐ [![Stars](https://img.shields.io/github/stars/nvbangg/EDAns)](https://github.com/nvbangg/EDAns)
+## [![Follow](https://img.shields.io/github/followers/nvbangg?label=Follow%20my%20GitHub&logo=github)](https://github.com/nvbangg) [![Star](https://img.shields.io/github/stars/nvbangg/EDAns?label=Star%20this%20repo&logo=github)](https://github.com/nvbangg/EDAns)
 
 ![Gif](https://raw.githubusercontent.com/nvbangg/nvbangg/main/data/star_follow.gif)
 
