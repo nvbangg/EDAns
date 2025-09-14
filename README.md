@@ -14,9 +14,8 @@
 
 *** Các Tools khác: https://github.com/nvbangg/nvbangg-tools ***
 
-## Follow me❤️ and Star⭐  
- **Follow❤️:** [![Follow](https://img.shields.io/github/followers/nvbangg?label=Follow&style=social)](https://github.com/nvbangg) | **Star⭐:** [![Star](https://img.shields.io/github/stars/nvbangg/EDAns?style=social)](https://github.com/nvbangg/EDAns)
+## Follow me❤️ [![Followers](https://img.shields.io/github/followers/nvbangg)](https://github.com/nvbangg) and Star⭐ [![Stars](https://img.shields.io/github/stars/nvbangg/EDAns)](https://github.com/nvbangg/EDAns)
 
 ![Gif](https://raw.githubusercontent.com/nvbangg/nvbangg/main/data/star_follow.gif)
 
-[![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Fnvbangg%2FEDAns&countColor=%232ccce4)](https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2Fnvbangg%2FEDAns)
+[![Visitors](https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Fnvbangg%2FEDAns&countColor=%231e90ff)](https://visitorbadge.io/status?path=https%3A%2F%2Fgithub.com%2Fnvbangg%2FEDAns)
