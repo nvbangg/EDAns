@@ -1,147 +1,91 @@
-let isTest = false;
-
 async function getAns() {
-  chrome.runtime.sendMessage({
-    type: 'ansUrl',
-    request: 'none',
-  }, async function(datax) {
-    console.clear();
-    console.log(datax);
-    let data = datax['aRequest'];
-    let autho = datax['autho'];
-
-    let res = await fetch(data, {
-      'headers': {
-        'Authorization': autho,
-      },
-    });
-    
-    await res.json().then(async function(dat) {
-      let qs = dat['i']['q'];
-      var sw = '';
-      for (var i = 0; i < qs.length; i++) {
-        let ch = qs[i]['al'];
-        for (var j = 0; j < ch.length; j++) {
-          aAns = ch[j]['a'];
-          for (var k = 0; k < aAns.length; k++) {
-            let op = aAns[k];
+  if (!chrome.runtime || !chrome.runtime.sendMessage) return;
+  chrome.runtime.sendMessage(
+    { type: 'ansUrl', request: 'none' },
+    async function (datax) {
+      const data = datax && datax['aRequest'];
+      const autho = datax && datax['autho'];
+      if (!data || !autho) return;
+      const res = await fetch(data, { headers: { Authorization: autho } });
+      const dat = await res.json();
+      const qs = dat && dat.i && dat.i.q ? dat.i.q : [];
+      let sw = '';
+      for (let i = 0; i < qs.length; i++) {
+        const ch = qs[i]['al'] || [];
+        for (let j = 0; j < ch.length; j++) {
+          const aAns = ch[j]['a'] || [];
+          for (let k = 0; k < aAns.length; k++) {
+            const op = aAns[k];
             if (!op['c'] || op['c'] == '1') {
-              console.log(j + 1 + ' ' + op['txt']);
-              sw += op['txt'] + '<br>';
+              sw += (op['txt'] || '') + '<br>';
             }
           }
         }
       }
       ansShow.innerHTML = sw;
-    });
-  });
+    }
+  );
 }
 
 function goToNextItem() {
-  document.getElementById('learning__nextItem').click();
-  setTimeout(getAns, 500);
+  const el = document.getElementById('learning__nextItem');
+  if (el) el.click();
 }
 
-function addEv(e) {
-  if (e.keyCode == 32) {
-    goToNextItem();
+document.addEventListener('keydown', function(e) {
+  if (e.keyCode === 32) {
+    clickElement('#CTrackerPlayBtn');
+    clickElement('#play-pause');
+    setTimeout(() => {
+      clickElement('#CTrackerPlayBtn');
+      clickElement('#play-pause');
+      setTimeout(() => {
+        goToNextItem();
+        setTimeout(() => {
+          getAns();
+          setTimeout(tryFinish, 300);
+        }, 700);
+      }, 100);
+    }, 200);
   }
-}
-
-document.addEventListener('keydown', addEv, false);
-
-document.addEventListener('keydown', function(event) {
-  if (event.keyCode === 90) {
-    if (!isTest) {
-      completeCurrent();
-      tryFinish();
-    }
-    setTimeout(goToNextItem, 500);
-  }
-});
+}, false);
 
 
-function completeCurrent() {
-  chrome.runtime.sendMessage({
-    type: 'completeTask',
-    request: 'none',
-  }, function(passData) {
-    const courseId = passData['courseId'];
-    const itemId = passData['itemId'];
-    const autho = passData['autho'];
-    const url = 'https://eduiwebservices21.engdis.com/api/Progress/SetProgressPerTask';
-    const body = '{"CourseId":' + courseId + ',"ItemId": ' + itemId + '}';
-    console.log(body + ' ' + autho);
-    
-    fetch(url, {
-      'headers': {
-        'Authorization': autho,
-        'content-type': 'application/json',
-      },
-      'body': body,
-      'method': 'POST',
-      'accept': 'application/json, text/plain, */*',
-    });
-  });
-}
-
-function clickElement(selector, delay = 0) {
-  const element = typeof selector === 'string' ? 
-    document.querySelector(selector) : selector;
-  if (element) {
-    setTimeout(() => element.click(), delay);
-    return true;
-  }
-  return false;
+function clickElement(selector) {
+  const el = document.querySelector(selector);
+  if (el) el.click();
 }
 
 function tryFinish() {
-  clickElement('#CTrackerPlayBtn');
-  setTimeout(() => clickElement('#CTrackerPlayBtn'), 200);
-  
-  clickElement('#play-pause');
-  setTimeout(() => clickElement('#play-pause'), 200);
-  
   clickElement('#question-1_answer-1');
   clickElement('.multiRadio');
   clickElement('.learning__selectTxt_st');
-  
-  if (clickElement('.DDLOptions__selected')) {
+  const dropdown = document.querySelector('.DDLOptions__selected');
+  if (dropdown) {
+    dropdown.click();
     setTimeout(() => clickElement('.DDLOptions__listItem'), 100);
   }
 }
 
-let clickTimer = null;
 let isDragging = false;
 let dragOffsetX = 0;
 let dragOffsetY = 0;
 let dragModeEnabled = false;
 
 const sumElement = document.createElement('div');
-sumElement.classList = 'carry';
+sumElement.className = 'carry';
 document.body.appendChild(sumElement);
 
 const btn0 = document.createElement('button');
-btn0.innerHTML = 'Get answer';
-btn0.classList = 'buttonX';
+btn0.innerHTML = 'Lấy lại đáp án';
+btn0.className = 'buttonX';
 sumElement.appendChild(btn0);
 
 const ansShow = document.createElement('div');
-ansShow.classList = 'ansShow';
+ansShow.className = 'ansShow';
 sumElement.appendChild(ansShow);
 
-btn0.onclick = function(e) {
-  if (clickTimer) {
-    clearTimeout(clickTimer);
-    clickTimer = null;
-    return;
-  }
-  
-  clickTimer = setTimeout(() => {
-    getAns();
-    clickTimer = null;
-  }, 300);
-};
+btn0.onclick = () => getAns();
 
 btn0.addEventListener('dblclick', function(e) {
   dragModeEnabled = true;
@@ -173,8 +117,6 @@ document.addEventListener('mousemove', function(e) {
   }
 });
 
-document.addEventListener('mouseup', function(e) {
-  if (isDragging) {
-    isDragging = false;
-  }
+document.addEventListener('mouseup', () => {
+  if (isDragging) isDragging = false;
 });

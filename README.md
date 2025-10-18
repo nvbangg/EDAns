@@ -8,10 +8,12 @@ Các Tools khác: https://github.com/nvbangg/nvbangg-tools
 3. Nhấn **Load unpacked** và Chọn thư mục `EDAns`
 
 ## ❓ Hướng dẫn 
-- Nhấn `Z` để tự động chọn và chuyển câu (dùng trong phần Explore và Practice)
-- Nhấn `Space` để Chuyển câu (dùng trong phần Test)
-- Đáp án tự động hiển thị sau khi chuyển câu bằng `Z`, `Space`
-- Click `Get Answer` để hiển thị đáp án thủ công
+- Nhấn `Space` để chuyển câu và tự động lấy đáp án và **chọn đáp án đầu tiên**
+    - Lưu ý extension chỉ tự động chọn đáp án đầu tiên mà không phải là đáp án thực tế (dùng cho phần practice không cần quan tâm kết quả mà chỉ cần làm nhanh)
+    - Còn phần "Test" thì phải tự chọn đáp án chính xác lấy từ ô hiển thị đáp án
+
+- Click `Lấy lại đáp án` để lấy đáp án thủ công (cho câu đầu tiên trong phần test)
+- Double Click để di chuyển nút lấy đáp án và vùng hiển thị đáp án
 
 ![Demo](demo.gif)
 
