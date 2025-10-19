@@ -9,10 +9,10 @@ Các Tools khác: https://github.com/nvbangg/nvbangg-tools
 
 ## ❓ Hướng dẫn 
 - Nhấn `Space` để chuyển câu và tự động lấy đáp án và chọn bừa một đáp án (không phải đáp án thật)
-    - Lưu ý ở phần test thì phải tự chọn đáp án đúng dựa trên ô hiển thị đáp án
-    - Việc chọn bừa 1 đáp án chỉ phù hợp cho phần practice do không cần đáp án chính xác
+    - Lưu ý ở phần `Test` thì phải tự chọn đáp án đúng dựa trên ô hiển thị đáp án
+    - Việc chọn bừa 1 đáp án chỉ phù hợp cho phần `Practice` do không cần đáp án chính xác
 
-- Click `Lấy lại đáp án` để lấy đáp án thủ công (cho câu đầu tiên trong phần test)
+- Click `Lấy lại đáp án` để lấy đáp án thủ công
 - Double Click để di chuyển nút lấy đáp án và vùng hiển thị đáp án
 
 ![Demo](demo.gif)

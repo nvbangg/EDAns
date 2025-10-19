@@ -33,7 +33,34 @@ function goToNextItem() {
 }
 
 document.addEventListener('keydown', function(e) {
-  if (e.keyCode === 32) {
+  const isSpace = (e.code === 'Space' || e.key === ' ' || e.key === 'Spacebar' || e.keyCode === 32);
+  if (isSpace) {
+    if (inTypingContext(e)) return;
+
+    e.preventDefault();
+
+    const afterGoToNext = () => {
+      setTimeout(() => {
+        getAns();
+        setTimeout(tryFinish, 400);
+      }, 600);
+    };
+
+    const startBtn = findVisible('.btnStartTest');
+    if (startBtn) {
+      startBtn.click();
+      afterGoToNext();
+      return;
+    }
+
+    const hasNext = !!findVisible('#learning__nextItem');
+    if (!hasNext) {
+      const bottomSubmit = findVisible('.learning__submitTestLink, #learning__submitTestItem');
+      if (bottomSubmit) {
+        bottomSubmit.click();
+        return;
+      }
+    }
     clickElement('#CTrackerPlayBtn');
     clickElement('#play-pause');
     setTimeout(() => {
@@ -41,10 +68,7 @@ document.addEventListener('keydown', function(e) {
       clickElement('#play-pause');
       setTimeout(() => {
         goToNextItem();
-        setTimeout(() => {
-          getAns();
-          setTimeout(tryFinish, 300);
-        }, 700);
+        afterGoToNext();
       }, 100);
     }, 200);
   }
@@ -54,6 +78,41 @@ document.addEventListener('keydown', function(e) {
 function clickElement(selector) {
   const el = document.querySelector(selector);
   if (el) el.click();
+}
+
+function isVisible(el) {
+  return !!(el && (el.offsetParent !== null || el.getClientRects().length));
+}
+
+function findVisible(selectorList) {
+  const nodes = document.querySelectorAll(selectorList);
+  for (const n of nodes) {
+    if (isVisible(n)) return n;
+  }
+  return null;
+}
+
+function inTypingContext(e) {
+  try {
+    const ae = document.activeElement;
+    const isTextInput = (el) => {
+      if (!el) return false;
+      if (el.isContentEditable) return true;
+      const tag = (el.tagName || '').toUpperCase();
+      const type = (el.type || '').toLowerCase();
+      if (tag === 'TEXTAREA') return true;
+      if (tag === 'INPUT') {
+        const nonText = ['checkbox','radio','button','submit','range','color','file','image','reset','hidden'];
+        return nonText.indexOf(type) === -1; 
+      }
+      const role = el.getAttribute && el.getAttribute('role');
+      return role === 'textbox';
+    };
+    if (isTextInput(ae)) return true;
+    const t = e && e.target;
+    if (isTextInput(t)) return true;
+  } catch (_) {}
+  return false;
 }
 
 function tryFinish() {
