@@ -1,30 +1,39 @@
-async function getAns() {
-  if (!chrome.runtime || !chrome.runtime.sendMessage) return;
-  chrome.runtime.sendMessage(
-    { type: "ansUrl", request: "none" },
-    async function (datax) {
-      const data = datax && datax["aRequest"];
-      const autho = datax && datax["autho"];
-      if (!data || !autho) return;
-      const res = await fetch(data, { headers: { Authorization: autho } });
-      const dat = await res.json();
-      const qs = dat && dat.i && dat.i.q ? dat.i.q : [];
-      let sw = "";
-      for (let i = 0; i < qs.length; i++) {
-        const ch = qs[i]["al"] || [];
-        for (let j = 0; j < ch.length; j++) {
-          const aAns = ch[j]["a"] || [];
-          for (let k = 0; k < aAns.length; k++) {
-            const op = aAns[k];
-            if (!op["c"] || op["c"] == "1") {
-              sw += (op["txt"] || "") + "<br>";
+var __ans = [];
+function getAns() {
+  return new Promise((resolve) => {
+    if (!chrome.runtime || !chrome.runtime.sendMessage) return resolve(false);
+    chrome.runtime.sendMessage({ type: "ansUrl", request: "none" }, async function (datax) {
+      try {
+        const data = datax && datax["aRequest"];
+        const autho = datax && datax["autho"];
+        if (!data || !autho) return resolve(false);
+        const res = await fetch(data, { headers: { Authorization: autho } });
+        const dat = await res.json();
+        const qs = dat && dat.i && dat.i.q ? dat.i.q : [];
+        const arrC = [];
+        const arrS = [];
+        for (let i = 0; i < qs.length; i++) {
+          const ch = qs[i]["al"] || [];
+          for (let j = 0; j < ch.length; j++) {
+            const aAns = ch[j]["a"] || [];
+            for (let k = 0; k < aAns.length; k++) {
+              const op = aAns[k];
+              const c = op && op["c"];
+              const txt = op["txt"] || "";
+              if (c === 1 || c === "1" || c === true) { arrC.push(txt); arrS.push(txt); }
+              else if (!c) { arrS.push(txt); }
             }
           }
         }
+        __ans = arrC.filter(Boolean);
+        ansShow.innerHTML = arrS.filter(Boolean).join("<br>");
+        setTimeout(applyCorrectAnswers, 50);
+        resolve(true);
+      } catch (_) {
+        resolve(false);
       }
-      ansShow.innerHTML = sw;
-    }
-  );
+    });
+  });
 }
 
 function goToNextItem() {
@@ -47,8 +56,13 @@ document.addEventListener(
 
       const afterGoToNext = () => {
         setTimeout(() => {
-          getAns();
-          setTimeout(tryFinish, 500);
+          getAns().then(() => setTimeout(() => {
+            if (document.querySelector(".prMCQ__answerLabel, .lessonMultipleCheck, .lessonMultipleAnswer")) {
+              applyCorrectAnswers();
+            } else {
+              tryFinish();
+            }
+          }, 150));
         }, 700);
       };
 
@@ -135,6 +149,67 @@ function inTypingContext(e) {
   return false;
 }
 
+function norm(s) {
+  return (s || "").toLowerCase().replace(/\s+/g, " ").trim();
+}
+function applyCorrectAnswers() {
+  try {
+    if (!__ans || !__ans.length) return false;
+    const set = new Set(__ans.map(norm));
+
+    // Case 1: Single-choice MCQ labels
+    const mcqLabels = document.querySelectorAll(".prMCQ__answerLabel");
+    if (mcqLabels && mcqLabels.length) {
+      let n1 = 0;
+      mcqLabels.forEach((l) => {
+        const t = norm(l.innerText || l.textContent || "");
+        if (set.has(t)) {
+          l.click();
+          n1++;
+        }
+      });
+      return n1 > 0;
+    }
+
+    // Case 2: Multi-select checkboxes
+    const conts = document.querySelectorAll(".lessonMultipleAnswer");
+    if (conts && conts.length) {
+      let toggled = 0;
+      conts.forEach((c) => {
+        // Extract option text
+        const txtEl =
+          c.querySelector(".multiTextInline") ||
+          c.querySelector(".multiText") ||
+          c.querySelector(".radioTextWrapper") ||
+          c;
+        const t = norm((txtEl && (txtEl.innerText || txtEl.textContent)) || "");
+
+        const shouldSelect = set.has(t);
+        const inp = c.querySelector("input.lessonMultipleCheck");
+        const isSelected = !!(
+          (inp && (inp.checked || inp.classList.contains("selected"))) ||
+          c.classList.contains("check")
+        );
+
+        let clickTarget = c.querySelector("label.overlayCheckbox") || c;
+
+        if (shouldSelect && !isSelected) {
+          clickTarget.click();
+          toggled++;
+        } else if (!shouldSelect && isSelected) {
+          // Deselect wrong options
+          clickTarget.click();
+          toggled++;
+        }
+      });
+      return toggled > 0;
+    }
+
+    return false;
+  } catch (_) {
+    return false;
+  }
+}
 function tryFinish() {
   const hasDnd = document.querySelector(
     '.dndBank, [id^="bank_"], ed-la-dndcloze, ' +
@@ -145,13 +220,16 @@ function tryFinish() {
     setTimeout(autoPlaceDndFirst, 200);
     return;
   }
-  clickElement("#question-1_answer-1");
-  clickElement(".multiRadio");
-  clickElement(".learning__selectTxt_st");
-  const dropdown = document.querySelector(".DDLOptions__selected");
-  if (dropdown) {
-    dropdown.click();
-    setTimeout(() => clickElement(".DDLOptions__listItem"), 100);
+  if (document.querySelector(".prMCQ__answerLabel, .lessonMultipleCheck, .lessonMultipleAnswer")) { applyCorrectAnswers(); return; }
+  if (!applyCorrectAnswers()) {
+    clickElement("#question-1_answer-1");
+    clickElement(".multiRadio");
+    clickElement(".learning__selectTxt_st");
+    const dropdown = document.querySelector(".DDLOptions__selected");
+    if (dropdown) {
+      dropdown.click();
+      setTimeout(() => clickElement(".DDLOptions__listItem"), 100);
+    }
   }
 }
 

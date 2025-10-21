@@ -8,11 +8,12 @@ Các Tools khác: https://github.com/nvbangg/nvbangg-tools
 3. Nhấn **Load unpacked** và Chọn thư mục `EDAns`
 
 ## ❓ Hướng dẫn 
-- Nhấn `Space` để chuyển câu và tự động lấy đáp án và chọn bừa một đáp án (không phải đáp án thật)
-    - Lưu ý ở phần `Test` thì phải tự chọn đáp án đúng dựa trên ô hiển thị đáp án
-    - Việc chọn bừa 1 đáp án chỉ phù hợp cho phần `Practice` do không cần đáp án chính xác
+- Nhấn `Space` để chuyển câu và tự động lấy đáp án và chọn các đáp án đúng
+    - Lưu ý phần `Practice` do không cần đáp án chính xác nên cứ `Space` là được
+    - Còn phần `Test` chưa hỗ trợ tự chọn đáp án chính xác cho dạng câu kéo thả và một số dạng đặc biệt khác
+    - Nên những phần đấy phải tự chọn đáp án đúng dựa trên bảng đáp án ở ô hiển thị đáp án
 
-- Click `Lấy lại đáp án` để lấy đáp án thủ công
+- Click `Lấy lại đáp án` nếu muốn lấy đáp án thủ công
 - Double Click để di chuyển nút lấy đáp án và vùng hiển thị đáp án
 
 ![Demo](demo.gif)
@@ -22,5 +23,5 @@ Các Tools khác: https://github.com/nvbangg/nvbangg-tools
     <a href="https://github.com/nvbangg/EDAns"><img src="https://img.shields.io/github/stars/nvbangg/EDAns?label=Star%20this%20repo&logo=github"></a>
     <img src="https://api.visitorbadge.io/api/visitors?path=https%3A%2F%2Fgithub.com%2Fnvbangg%2FEDAns&countColor=blue&textColor=000000" height="20">
     <br>
-    <img src="https://raw.githubusercontent.com/nvbangg/nvbangg/main/data/star_follow.gif" height="150">
+    <img src="https://nvbangg.github.io/assets/gifs/follow_star_github.gif" height="100">
 </div>
