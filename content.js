@@ -1,30 +1,28 @@
-var __ans = [];
+let __ans = [];
 function getAns() {
   return new Promise((resolve) => {
-    if (!chrome.runtime || !chrome.runtime.sendMessage) return resolve(false);
-    chrome.runtime.sendMessage({ type: "ansUrl", request: "none" }, async function (datax) {
+    if (!chrome.runtime?.sendMessage) return resolve(false);
+    chrome.runtime.sendMessage({ type: "ansUrl" }, async (datax) => {
       try {
-        const data = datax && datax["aRequest"];
-        const autho = datax && datax["autho"];
+        const { aRequest: data, autho } = datax || {};
         if (!data || !autho) return resolve(false);
         const res = await fetch(data, { headers: { Authorization: autho } });
-        const dat = await res.json();
-        const qs = dat && dat.i && dat.i.q ? dat.i.q : [];
-        const arrC = [];
-        const arrS = [];
-        for (let i = 0; i < qs.length; i++) {
-          const ch = qs[i]["al"] || [];
-          for (let j = 0; j < ch.length; j++) {
-            const aAns = ch[j]["a"] || [];
-            for (let k = 0; k < aAns.length; k++) {
-              const op = aAns[k];
-              const c = op && op["c"];
-              const txt = op["txt"] || "";
-              if (c === 1 || c === "1" || c === true) { arrC.push(txt); arrS.push(txt); }
-              else if (!c) { arrS.push(txt); }
-            }
-          }
-        }
+        const { i: { q: qs = [] } = {} } = await res.json();
+        const arrC = [],
+          arrS = [];
+        qs.forEach((q) => {
+          (q.al || []).forEach((ch) => {
+            (ch.a || []).forEach((op) => {
+              const txt = op.txt || "";
+              if (op.c === 1 || op.c === "1" || op.c === true) {
+                arrC.push(txt);
+                arrS.push(txt);
+              } else if (!op.c) {
+                arrS.push(txt);
+              }
+            });
+          });
+        });
         __ans = arrC.filter(Boolean);
         ansShow.innerHTML = arrS.filter(Boolean).join("<br>");
         setTimeout(applyCorrectAnswers, 50);
@@ -36,183 +34,157 @@ function getAns() {
   });
 }
 
-function goToNextItem() {
-  const el = document.getElementById("learning__nextItem");
-  if (el) el.click();
-}
+const clickElement = (sel) => document.querySelector(sel)?.click();
+const goToNextItem = () => clickElement("#learning__nextItem");
 
 document.addEventListener(
   "keydown",
-  function (e) {
-    const isSpace =
-      e.code === "Space" ||
-      e.key === " " ||
-      e.key === "Spacebar" ||
-      e.keyCode === 32;
-    if (isSpace) {
-      if (inTypingContext(e)) return;
+  (e) => {
+    if (
+      ![32, "Space", " ", "Spacebar"].includes(
+        e.keyCode === 32 ? 32 : e.code || e.key
+      )
+    )
+      return;
+    if (inTypingContext(e)) return;
+    e.preventDefault();
 
-      e.preventDefault();
-
-      const afterGoToNext = () => {
-        setTimeout(() => {
-          getAns().then(() => setTimeout(() => {
-            if (document.querySelector(".prMCQ__answerLabel, .lessonMultipleCheck, .lessonMultipleAnswer")) {
+    const afterGoToNext = () => {
+      setTimeout(() => {
+        getAns().then(() =>
+          setTimeout(() => {
+            if (
+              document.querySelector(
+                ".prMCQ__answerLabel, .lessonMultipleCheck, .lessonMultipleAnswer"
+              )
+            ) {
               applyCorrectAnswers();
             } else {
               tryFinish();
             }
-          }, 150));
-        }, 700);
-      };
+          }, 150)
+        );
+      }, 700);
+    };
 
-      const startBtn = findVisible(".btnStartTest");
-      if (startBtn) {
-        startBtn.click();
-        afterGoToNext();
+    const startBtn = findVisible(".btnStartTest");
+    if (startBtn) {
+      startBtn.click();
+      afterGoToNext();
+      return;
+    }
+
+    if (!findVisible("#learning__nextItem")) {
+      const bottomSubmit = findVisible(
+        ".learning__submitTestLink, #learning__submitTestItem"
+      );
+      if (bottomSubmit) {
+        bottomSubmit.click();
         return;
       }
+    }
 
-      const hasNext = !!findVisible("#learning__nextItem");
-      if (!hasNext) {
-        const bottomSubmit = findVisible(
-          ".learning__submitTestLink, #learning__submitTestItem"
-        );
-        if (bottomSubmit) {
-          bottomSubmit.click();
-          return;
-        }
-      }
+    clickElement("#CTrackerPlayBtn");
+    clickElement("#play-pause");
+    setTimeout(() => {
       clickElement("#CTrackerPlayBtn");
       clickElement("#play-pause");
       setTimeout(() => {
-        clickElement("#CTrackerPlayBtn");
-        clickElement("#play-pause");
-        setTimeout(() => {
-          goToNextItem();
-          afterGoToNext();
-        }, 100);
-      }, 200);
-    }
+        goToNextItem();
+        afterGoToNext();
+      }, 100);
+    }, 200);
   },
   false
 );
 
-function clickElement(selector) {
-  const el = document.querySelector(selector);
-  if (el) el.click();
-}
+const isVisible = (el) =>
+  !!(el && (el.offsetParent !== null || el.getClientRects().length));
+const findVisible = (sel) =>
+  [...document.querySelectorAll(sel)].find(isVisible) || null;
 
-function isVisible(el) {
-  return !!(el && (el.offsetParent !== null || el.getClientRects().length));
-}
+const isTextInput = (el) => {
+  if (!el) return false;
+  if (el.isContentEditable) return true;
+  const tag = el.tagName?.toUpperCase();
+  const type = el.type?.toLowerCase();
+  if (tag === "TEXTAREA") return true;
+  if (tag === "INPUT")
+    return ![
+      "checkbox",
+      "radio",
+      "button",
+      "submit",
+      "range",
+      "color",
+      "file",
+      "image",
+      "reset",
+      "hidden",
+    ].includes(type);
+  return el.getAttribute?.("role") === "textbox";
+};
 
-function findVisible(selectorList) {
-  const nodes = document.querySelectorAll(selectorList);
-  for (const n of nodes) {
-    if (isVisible(n)) return n;
-  }
-  return null;
-}
-
-function inTypingContext(e) {
+const inTypingContext = (e) => {
   try {
-    const ae = document.activeElement;
-    const isTextInput = (el) => {
-      if (!el) return false;
-      if (el.isContentEditable) return true;
-      const tag = (el.tagName || "").toUpperCase();
-      const type = (el.type || "").toLowerCase();
-      if (tag === "TEXTAREA") return true;
-      if (tag === "INPUT") {
-        const nonText = [
-          "checkbox",
-          "radio",
-          "button",
-          "submit",
-          "range",
-          "color",
-          "file",
-          "image",
-          "reset",
-          "hidden",
-        ];
-        return nonText.indexOf(type) === -1;
-      }
-      const role = el.getAttribute && el.getAttribute("role");
-      return role === "textbox";
-    };
-    if (isTextInput(ae)) return true;
-    const t = e && e.target;
-    if (isTextInput(t)) return true;
-  } catch (_) {}
-  return false;
-}
+    return isTextInput(document.activeElement) || isTextInput(e?.target);
+  } catch (_) {
+    return false;
+  }
+};
 
-function norm(s) {
-  return (s || "").toLowerCase().replace(/\s+/g, " ").trim();
-}
+const norm = (s) => (s || "").toLowerCase().replace(/\s+/g, " ").trim();
+
 function applyCorrectAnswers() {
   try {
-    if (!__ans || !__ans.length) return false;
+    if (!__ans?.length) return false;
     const set = new Set(__ans.map(norm));
 
-    // Case 1: Single-choice MCQ labels
     const mcqLabels = document.querySelectorAll(".prMCQ__answerLabel");
-    if (mcqLabels && mcqLabels.length) {
+    if (mcqLabels.length) {
       let n1 = 0;
       mcqLabels.forEach((l) => {
-        const t = norm(l.innerText || l.textContent || "");
-        if (set.has(t)) {
+        if (set.has(norm(l.innerText || l.textContent || ""))) {
           l.click();
           n1++;
         }
       });
-      return n1 > 0;
+      if (n1 > 0) return true;
     }
 
-    // Case 2: Multi-select checkboxes
     const conts = document.querySelectorAll(".lessonMultipleAnswer");
-    if (conts && conts.length) {
+    if (conts.length) {
       let toggled = 0;
       conts.forEach((c) => {
-        // Extract option text
         const txtEl =
           c.querySelector(".multiTextInline") ||
           c.querySelector(".multiText") ||
           c.querySelector(".radioTextWrapper") ||
           c;
-        const t = norm((txtEl && (txtEl.innerText || txtEl.textContent)) || "");
-
+        const t = norm(txtEl?.innerText || txtEl?.textContent || "");
         const shouldSelect = set.has(t);
         const inp = c.querySelector("input.lessonMultipleCheck");
         const isSelected = !!(
-          (inp && (inp.checked || inp.classList.contains("selected"))) ||
+          inp?.checked ||
+          inp?.classList.contains("selected") ||
           c.classList.contains("check")
         );
-
-        let clickTarget = c.querySelector("label.overlayCheckbox") || c;
-
-        if (shouldSelect && !isSelected) {
-          clickTarget.click();
-          toggled++;
-        } else if (!shouldSelect && isSelected) {
-          // Deselect wrong options
+        const clickTarget = c.querySelector("label.overlayCheckbox") || c;
+        if (shouldSelect !== isSelected) {
           clickTarget.click();
           toggled++;
         }
       });
-      return toggled > 0;
+      if (toggled > 0) return true;
     }
 
     const ddls = document.querySelectorAll(".prFITB__DDLOptionsW");
-    if (ddls && ddls.length) {
+    if (ddls.length) {
       const cnt = {};
-      for (let i = 0; i < __ans.length; i++) {
-        const s = norm(__ans[i]);
-        if (!s) continue;
-        cnt[s] = (cnt[s] || 0) + 1;
-      }
+      __ans.forEach((ans) => {
+        const s = norm(ans);
+        if (s) cnt[s] = (cnt[s] || 0) + 1;
+      });
       let changed = 0;
       ddls.forEach((w) => {
         const sel = w.querySelector(".DDLOptions__selected");
@@ -223,15 +195,12 @@ function applyCorrectAnswers() {
           return;
         }
         sel.click();
-        const main = w.parentElement || w;
-        let list = main.querySelector(".DDLOptions__list");
+        const list = (w.parentElement || w).querySelector(".DDLOptions__list");
         if (!list) {
           setTimeout(() => applyCorrectAnswers(), 60);
           return;
         }
-        const items = list.querySelectorAll(".DDLOptions__listItem");
-        for (let i = 0; i < items.length; i++) {
-          const it = items[i];
+        for (const it of list.querySelectorAll(".DDLOptions__listItem")) {
           const t = norm(it.innerText || it.textContent || "");
           if (cnt[t] > 0 || (!Object.keys(cnt).length && set.has(t))) {
             it.click();
@@ -243,24 +212,27 @@ function applyCorrectAnswers() {
       });
       return changed > 0 || ddls.length > 0;
     }
-
     return false;
   } catch (_) {
     return false;
   }
 }
+const dndSelector =
+  '.dndBank, [id^="bank_"], ed-la-dndcloze, [dg_name="TTpTablePlaceHolder"], #bankContainer .dndZone, .prCl__container--bank .dndZone, .prMT_T2T__wordsBankWrapper .dndZone';
+
 function tryFinish() {
-  const hasDnd = document.querySelector(
-    '.dndBank, [id^="bank_"], ed-la-dndcloze, ' +
-      '[dg_name="TTpTablePlaceHolder"], ' +
-      "#bankContainer .dndZone, .prCl__container--bank .dndZone, .prMT_T2T__wordsBankWrapper .dndZone"
-  );
-  if (hasDnd) {
+  if (document.querySelector(dndSelector)) {
     setTimeout(autoPlaceDndFirst, 200);
     return;
   }
-  if (document.querySelector(".prMCQ__answerLabel, .lessonMultipleCheck, .lessonMultipleAnswer")) { applyCorrectAnswers(); return; }
-  if (document.querySelector(".prFITB__DDLOptionsW, .DDLOptions__selected")) { applyCorrectAnswers(); return; }
+  if (
+    document.querySelector(
+      ".prMCQ__answerLabel, .lessonMultipleCheck, .lessonMultipleAnswer, .prFITB__DDLOptionsW, .DDLOptions__selected"
+    )
+  ) {
+    applyCorrectAnswers();
+    return;
+  }
   if (!applyCorrectAnswers()) {
     clickElement("#question-1_answer-1");
     clickElement(".multiRadio");
@@ -268,10 +240,10 @@ function tryFinish() {
   }
 }
 
-let isDragging = false;
-let dragOffsetX = 0;
-let dragOffsetY = 0;
-let dragModeEnabled = false;
+let isDragging = false,
+  dragModeEnabled = false,
+  dragOffsetX = 0,
+  dragOffsetY = 0;
 
 const sumElement = document.createElement("div");
 sumElement.className = "carry";
@@ -280,15 +252,14 @@ document.body.appendChild(sumElement);
 const btn0 = document.createElement("button");
 btn0.innerHTML = "Lấy lại đáp án";
 btn0.className = "buttonX";
+btn0.onclick = () => getAns();
 sumElement.appendChild(btn0);
 
 const ansShow = document.createElement("div");
 ansShow.className = "ansShow";
 sumElement.appendChild(ansShow);
 
-btn0.onclick = () => getAns();
-
-btn0.addEventListener("dblclick", function (e) {
+btn0.addEventListener("dblclick", (e) => {
   dragModeEnabled = true;
   btn0.style.backgroundColor = "orange";
   btn0.style.cursor = "move";
@@ -300,7 +271,7 @@ btn0.addEventListener("dblclick", function (e) {
   e.preventDefault();
 });
 
-btn0.addEventListener("mousedown", function (e) {
+btn0.addEventListener("mousedown", (e) => {
   if (e.button === 0 && dragModeEnabled) {
     isDragging = true;
     const rect = sumElement.getBoundingClientRect();
@@ -310,7 +281,7 @@ btn0.addEventListener("mousedown", function (e) {
   }
 });
 
-document.addEventListener("mousemove", function (e) {
+document.addEventListener("mousemove", (e) => {
   if (isDragging && dragModeEnabled) {
     sumElement.style.left = e.clientX - dragOffsetX + "px";
     sumElement.style.top = e.clientY - dragOffsetY + "px";
@@ -319,25 +290,24 @@ document.addEventListener("mousemove", function (e) {
 });
 
 document.addEventListener("mouseup", () => {
-  if (isDragging) isDragging = false;
+  isDragging = false;
 });
 
-let __dndAutoPlaced = false;
-let __dndContextKey = "";
-let __dndObserver = null;
-let __dndUserDrag = false;
-let __dndMoTimer = null;
+let __dndAutoPlaced = false,
+  __dndContextKey = "",
+  __dndObserver = null,
+  __dndUserDrag = false,
+  __dndMoTimer = null;
 
 document.addEventListener(
   "mousedown",
   (e) => {
-    const n =
-      e.target &&
-      (e.target.closest(".dnditem") || e.target.closest("ed-la-dnditem"));
-    if (n) __dndUserDrag = true;
+    if (e.target?.closest(".dnditem") || e.target?.closest("ed-la-dnditem"))
+      __dndUserDrag = true;
   },
   true
 );
+
 document.addEventListener(
   "mouseup",
   () => {
@@ -354,15 +324,12 @@ document.addEventListener(
   (e) => {
     const t = e.target;
     if (!t) return;
-    const nextBtn =
-      t.id === "learning__nextItem"
-        ? t
-        : t.closest && t.closest("#learning__nextItem");
-    const prevBtn =
-      t.id === "learning__prevItem"
-        ? t
-        : t.closest && t.closest("#learning__prevItem");
-    if (nextBtn || prevBtn) {
+    const isNavBtn =
+      t.id === "learning__nextItem" ||
+      t.id === "learning__prevItem" ||
+      t.closest?.("#learning__nextItem") ||
+      t.closest?.("#learning__prevItem");
+    if (isNavBtn) {
       __dndAutoPlaced = false;
       __dndContextKey = "";
       setTimeout(() => autoPlaceDndFirst(), 600);
@@ -371,52 +338,43 @@ document.addEventListener(
   true
 );
 
+const zoneSelector =
+  ".prCLZ__regContainer .dndZone, ed-la-dndcloze .dndZone[id^='0_'], .prMT_T2T__regContainer .dndZone, .prCl__container.regContainer .dndZone";
+const bankSelector =
+  ".dndBank, [id^='bank_'], [dg_name='TTpTablePlaceHolder'], #bankContainer .dndZone, .prCl__container--bank .dndZone, .prMT_T2T__wordsBankWrapper .dndZone";
+
 function autoPlaceDndFirst() {
   try {
-    if (__dndUserDrag) return;
-    if (document.querySelector(".gu-mirror, .gu-transit")) return;
-    const firstZone =
-      document.querySelector(".prCLZ__regContainer .dndZone") ||
-      document.querySelector('ed-la-dndcloze .dndZone[id^="0_"]') ||
-      document.querySelector(".prMT_T2T__regContainer .dndZone") ||
-      document.querySelector(".prCl__container.regContainer .dndZone");
-    const bank =
-      document.querySelector(".dndBank") ||
-      document.querySelector('[id^="bank_"]') ||
-      document.querySelector('[dg_name="TTpTablePlaceHolder"]') ||
-      document.querySelector("#bankContainer .dndZone") ||
-      document.querySelector(".prCl__container--bank .dndZone") ||
-      document.querySelector(".prMT_T2T__wordsBankWrapper .dndZone");
+    if (__dndUserDrag || document.querySelector(".gu-mirror, .gu-transit"))
+      return;
+    const firstZone = document.querySelector(zoneSelector);
+    const bank = document.querySelector(bankSelector);
     if (!firstZone || !bank) return;
-    const bankKey =
-      bank.id ||
-      bank.getAttribute("dg_name") ||
-      bank.getAttribute("ng-reflect-container-id") ||
+
+    const getKey = (el) =>
+      el.id ||
+      el.getAttribute("dg_name") ||
+      el.getAttribute("ng-reflect-container-id") ||
       "";
-    const zoneKey =
-      firstZone.id ||
-      firstZone.getAttribute("dg_name") ||
-      firstZone.getAttribute("ng-reflect-container-id") ||
-      "";
-    const ctxKey = bankKey + "|" + zoneKey;
+    const ctxKey = getKey(bank) + "|" + getKey(firstZone);
     if (ctxKey !== __dndContextKey) {
       __dndContextKey = ctxKey;
       __dndAutoPlaced = false;
     }
     if (__dndAutoPlaced) return;
+
     let draggable =
       bank.querySelector("ed-la-dnditem .dnditem.draggable") ||
       bank.querySelector(".dnditem.draggable");
-    if (!draggable) {
-      const inner = bank.querySelector("ed-la-dnditem");
-      if (inner) draggable = inner.querySelector(".dnditem") || null;
-    }
+    if (!draggable)
+      draggable =
+        bank.querySelector("ed-la-dnditem")?.querySelector(".dnditem") || null;
+
     if (draggable && !firstZone.querySelector(".dnditem")) {
       const before = firstZone.querySelectorAll(".dnditem").length;
       simulateDragDrop(draggable, firstZone).then((ok) => {
         setTimeout(() => {
-          const after = firstZone.querySelectorAll(".dnditem").length;
-          if (ok && after > before) {
+          if (ok && firstZone.querySelectorAll(".dnditem").length > before) {
             __dndAutoPlaced = true;
           }
         }, 160);
@@ -425,68 +383,55 @@ function autoPlaceDndFirst() {
   } catch (_) {}
 }
 
-function dispatchMouse(node, type, x, y) {
-  const o = {
-    bubbles: true,
-    cancelable: true,
-    clientX: x,
-    clientY: y,
-    screenX: x,
-    screenY: y,
-    button: 0,
-    buttons: 1,
-    view: window,
-  };
-  node.dispatchEvent(new MouseEvent(type, o));
-}
-
-function dispatchPointer(node, type, x, y) {
+const eventOpts = (x, y) => ({
+  bubbles: true,
+  cancelable: true,
+  clientX: x,
+  clientY: y,
+  screenX: x,
+  screenY: y,
+  button: 0,
+  buttons: 1,
+  view: window,
+});
+const dispatchMouse = (node, type, x, y) =>
+  node.dispatchEvent(new MouseEvent(type, eventOpts(x, y)));
+const dispatchPointer = (node, type, x, y) => {
   if (!window.PointerEvent) return;
-  const o = {
-    bubbles: true,
-    cancelable: true,
-    clientX: x,
-    clientY: y,
-    screenX: x,
-    screenY: y,
-    button: 0,
-    buttons: 1,
-    pointerId: 1,
-    pointerType: "mouse",
-    view: window,
-  };
-  node.dispatchEvent(new PointerEvent(type, o));
-}
-
-function delay(ms) {
-  return new Promise((r) => setTimeout(r, ms));
-}
+  const opts = { ...eventOpts(x, y), pointerId: 1, pointerType: "mouse" };
+  node.dispatchEvent(new PointerEvent(type, opts));
+};
+const delay = (ms) => new Promise((r) => setTimeout(r, ms));
 
 async function simulateDragDrop(draggable, target) {
   try {
     if (!draggable || !target) return false;
     draggable.scrollIntoView({ block: "center", inline: "center" });
     target.scrollIntoView({ block: "center", inline: "center" });
-    const s = draggable.getBoundingClientRect();
-    const t = target.getBoundingClientRect();
-    const sx = s.left + Math.min(s.width - 2, Math.max(2, s.width / 2));
-    const sy = s.top + Math.min(s.height - 2, Math.max(2, s.height / 2));
-    const tx = t.left + Math.min(t.width - 4, Math.max(4, t.width / 2));
-    const ty = t.top + Math.min(t.height - 4, Math.max(4, t.height / 2));
+    const s = draggable.getBoundingClientRect(),
+      t = target.getBoundingClientRect();
+    const clamp = (v, min, max) => Math.min(max, Math.max(min, v));
+    const sx = s.left + clamp(s.width / 2, 2, s.width - 2);
+    const sy = s.top + clamp(s.height / 2, 2, s.height - 2);
+    const tx = t.left + clamp(t.width / 2, 4, t.width - 4);
+    const ty = t.top + clamp(t.height / 2, 4, t.height - 4);
+
     dispatchPointer(draggable, "pointerover", sx, sy);
     dispatchMouse(draggable, "mouseover", sx, sy);
     dispatchPointer(draggable, "pointerdown", sx, sy);
     dispatchMouse(draggable, "mousedown", sx, sy);
     await delay(30);
-    const steps = 10;
-    const kickX = sx + Math.sign(tx - sx) * 5;
-    const kickY = sy + Math.sign(ty - sy) * 5;
+
+    const steps = 10,
+      kickX = sx + Math.sign(tx - sx) * 5,
+      kickY = sy + Math.sign(ty - sy) * 5;
     dispatchPointer(document, "pointermove", kickX, kickY);
     dispatchMouse(document, "mousemove", kickX, kickY);
     await delay(16);
+
     for (let i = 1; i <= steps; i++) {
-      const x = sx + ((tx - sx) * i) / steps;
-      const y = sy + ((ty - sy) * i) / steps;
+      const x = sx + ((tx - sx) * i) / steps,
+        y = sy + ((ty - sy) * i) / steps;
       dispatchPointer(document, "pointermove", x, y);
       dispatchMouse(document, "mousemove", x, y);
       dispatchPointer(window, "pointermove", x, y);
@@ -497,24 +442,20 @@ async function simulateDragDrop(draggable, target) {
       }
       await delay(16);
     }
+
     dispatchPointer(target, "pointerup", tx, ty);
     dispatchMouse(target, "mouseup", tx, ty);
-    for (let w = 0; w < 12; w++) {
-      if (!document.querySelector(".gu-mirror")) break;
+    for (let w = 0; w < 12 && document.querySelector(".gu-mirror"); w++)
       await delay(16);
-    }
     await delay(30);
     return true;
-  } catch (e) {
+  } catch (_) {
     return false;
   }
 }
 
 setTimeout(() => {
-  const hasDnd = document.querySelector(
-    '.dndBank, [id^="bank_"], [dg_name="TTpTablePlaceHolder"], #bankContainer .dndZone, .prCl__container--bank .dndZone, .prMT_T2T__wordsBankWrapper .dndZone'
-  );
-  if (hasDnd) autoPlaceDndFirst();
+  if (document.querySelector(bankSelector)) autoPlaceDndFirst();
 }, 800);
 
 try {
@@ -523,13 +464,7 @@ try {
     if (__dndMoTimer) clearTimeout(__dndMoTimer);
     __dndMoTimer = setTimeout(() => {
       __dndMoTimer = null;
-      const hasDnd =
-        document.querySelector('.dndBank, [id^="bank_"]') ||
-        document.querySelector("ed-la-dndcloze .dndZone") ||
-        document.querySelector(
-          '[dg_name="TTpTablePlaceHolder"], #bankContainer .dndZone, .prCl__container--bank .dndZone, .prMT_T2T__wordsBankWrapper .dndZone'
-        );
-      if (hasDnd) autoPlaceDndFirst();
+      if (document.querySelector(bankSelector)) autoPlaceDndFirst();
     }, 300);
   });
   __dndObserver.observe(document.documentElement || document.body, {

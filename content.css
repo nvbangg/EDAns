@@ -20,7 +20,7 @@
   position: fixed;
   font: 18px/1.8 system-ui;
   background-color: white;
-  border: 1px solid black;
+  border: 1px solid;
   padding-bottom: 2px;
   z-index: 1000;
 }
