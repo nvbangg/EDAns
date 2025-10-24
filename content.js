@@ -205,6 +205,45 @@ function applyCorrectAnswers() {
       return toggled > 0;
     }
 
+    const ddls = document.querySelectorAll(".prFITB__DDLOptionsW");
+    if (ddls && ddls.length) {
+      const cnt = {};
+      for (let i = 0; i < __ans.length; i++) {
+        const s = norm(__ans[i]);
+        if (!s) continue;
+        cnt[s] = (cnt[s] || 0) + 1;
+      }
+      let changed = 0;
+      ddls.forEach((w) => {
+        const sel = w.querySelector(".DDLOptions__selected");
+        if (!sel) return;
+        const cur = norm(sel.innerText || sel.textContent || "");
+        if (cnt[cur] > 0) {
+          cnt[cur]--;
+          return;
+        }
+        sel.click();
+        const main = w.parentElement || w;
+        let list = main.querySelector(".DDLOptions__list");
+        if (!list) {
+          setTimeout(() => applyCorrectAnswers(), 60);
+          return;
+        }
+        const items = list.querySelectorAll(".DDLOptions__listItem");
+        for (let i = 0; i < items.length; i++) {
+          const it = items[i];
+          const t = norm(it.innerText || it.textContent || "");
+          if (cnt[t] > 0 || (!Object.keys(cnt).length && set.has(t))) {
+            it.click();
+            cnt[t] = (cnt[t] || 0) - 1;
+            changed++;
+            break;
+          }
+        }
+      });
+      return changed > 0 || ddls.length > 0;
+    }
+
     return false;
   } catch (_) {
     return false;
@@ -221,15 +260,11 @@ function tryFinish() {
     return;
   }
   if (document.querySelector(".prMCQ__answerLabel, .lessonMultipleCheck, .lessonMultipleAnswer")) { applyCorrectAnswers(); return; }
+  if (document.querySelector(".prFITB__DDLOptionsW, .DDLOptions__selected")) { applyCorrectAnswers(); return; }
   if (!applyCorrectAnswers()) {
     clickElement("#question-1_answer-1");
     clickElement(".multiRadio");
     clickElement(".learning__selectTxt_st");
-    const dropdown = document.querySelector(".DDLOptions__selected");
-    if (dropdown) {
-      dropdown.click();
-      setTimeout(() => clickElement(".DDLOptions__listItem"), 100);
-    }
   }
 }
 
