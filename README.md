@@ -24,7 +24,7 @@ Các Tools khác: https://github.com/nvbangg/nvbangg-tools
 
 <div align="center">
 
-[![Followers](https://img.shields.io/github/followers/nvbangg?label=Follow%20my%20GitHub&logo=github)](https://github.com/nvbangg) [![Stars](https://img.shields.io/github/stars/nvbangg/EDAns?label=Star%20this%20repo&logo=github)](https://github.com/nvbangg/EDAns) ![Visitors](https://api.visitorbadge.io/api/visitors?path=nvbangg%2FEDAns&countColor=blue&style=flat&labelStyle=none)<br><img src="https://nvbangg.github.io/assets/gifs/follow_star_github.gif" height="100">
+[![Followers](https://img.shields.io/github/followers/nvbangg?label=Follow%20my%20GitHub&logo=github)](https://github.com/nvbangg) &nbsp; [![Stars](https://img.shields.io/github/stars/nvbangg/EDAns?label=Star%20this%20repo&logo=github)](https://github.com/nvbangg/EDAns) &nbsp; ![Visitors](https://api.visitorbadge.io/api/visitors?path=EDAns&countColor=blue&style=flat&labelStyle=none)<br><img src="https://nvbangg.github.io/assets/gifs/follow_star_github.gif" height="100">
 
 </div>
 
