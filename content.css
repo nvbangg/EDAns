@@ -1,0 +1,26 @@
+.buttonX {
+  display: block;
+  position: relative;
+  width: 150px;
+  height: 40px;
+  padding: 5px 10px;
+  font: 500 20px/1.3 system-ui;
+  z-index: 1000;
+  background-color: lightgreen;
+  cursor: pointer;
+  border-radius: 10px;
+}
+.carry {
+  position: fixed;
+  top: 70px;
+  left: 300px;
+  z-index: 1000;
+}
+.ansShow {
+  position: fixed;
+  font: 18px/1.8 system-ui;
+  background-color: white;
+  border: 1px solid;
+  padding-bottom: 2px;
+  z-index: 1000;
+}

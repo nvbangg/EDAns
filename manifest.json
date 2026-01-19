@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "ED Ans",
+  "version": "1.2",
+  "permissions": ["storage", "webRequest"],
+  "host_permissions": ["https://*.engdis.com/*"],
+  "icons": {
+    "128": "icon.png"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*.engdis.com/*"],
+      "run_at": "document_idle",
+      "js": ["content.js"],
+      "css": ["content.css"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_title": "Open EDAns Homepage"
+  }
+}
