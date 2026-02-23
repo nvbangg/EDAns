@@ -1,8 +1,12 @@
-# EDAns - Extension tự động làm nhanh ED và TOEIC
+# EDAns
+> [!NOTE]
+> Extension tự động làm nhanh ED và TOEIC
 
-Các Tools khác: https://github.com/nvbangg/nvbangg-tools
-
-[![Stars](https://img.shields.io/github/stars/nvbangg/EDAns?label=Like%20this%20project%3F%20Star%20it%20⭐&logo=github)](https://github.com/nvbangg/EDAns) &nbsp; [![Followers](https://img.shields.io/github/followers/nvbangg?label=Follow%20me&logo=github)](https://github.com/nvbangg) &nbsp; [![Sponsor](https://img.shields.io/badge/Sponsor%20this%20project-pink?style=social&logo=github-sponsors)](https://nvbangg.github.io/#donate)
+<div align="center">
+  
+[![Stars](https://img.shields.io/github/stars/nvbangg/EDAns?label=Star%20this%20repo%20if%20useful%20⭐&logo=github)](https://github.com/nvbangg/EDAns) &ensp; [![Donate](https://img.shields.io/badge/Support%20this%20project-pink?style=social&logo=github-sponsors)](https://nvbangg.github.io/#donate)
+<br>👉 Other Tools: [nvbangg-tools](https://github.com/nvbangg/nvbangg-tools)
+</div> 
 
 ## ⬇️ Cài đặt
 
@@ -23,10 +27,3 @@ Các Tools khác: https://github.com/nvbangg/nvbangg-tools
 - Double Click để di chuyển nút lấy đáp án và vùng hiển thị đáp án
 
 ![Demo](demo.gif)
-
----
-
-## ⚖️ Privacy Policy & Legal
-
-- This project does not collect any data of any kind
-- Copyright (c) 2025 Nguyễn Văn Bằng (nvbangg, [github.com/nvbangg](https://github.com/nvbangg))
