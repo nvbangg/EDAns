@@ -1,11 +1,11 @@
-# EDAns
+# [nvbangg/EDAns](https://github.com/nvbangg/EDAns)
 > [!NOTE]
 > Extension tự động làm nhanh ED và TOEIC
 
 <div align="center">
   
-[![Stars](https://img.shields.io/github/stars/nvbangg/EDAns?label=Star%20this%20repo%20if%20useful%20⭐&logo=github)](https://github.com/nvbangg/EDAns) &ensp; [![Donate](https://img.shields.io/badge/Support%20this%20project-pink?style=social&logo=github-sponsors)](https://nvbangg.github.io/#donate)
-<br>👉 Other Tools: [nvbangg-tools](https://github.com/nvbangg/nvbangg-tools)
+[![Stars](https://img.shields.io/github/stars/nvbangg/EDAns?label=Star%20this%20repo%20if%20useful%20%E2%AD%90&logo=github-sponsors)](https://github.com/nvbangg/EDAns)　[![GitHub](https://img.shields.io/badge/nvbangg-black?style=social&logo=github)](https://github.com/nvbangg)
+
 </div> 
 
 ## ⬇️ Cài đặt
