@@ -4,7 +4,8 @@
 
 <div align="center">
   
-[![Stars](https://img.shields.io/github/stars/nvbangg/EDAns?label=Star%20this%20repo%20if%20useful%20%E2%AD%90&logo=github-sponsors)](https://github.com/nvbangg/EDAns)　[![GitHub](https://img.shields.io/badge/nvbangg-black?style=social&logo=github)](https://github.com/nvbangg)
+[![Stars](https://img.shields.io/github/stars/nvbangg/EDAns?label=Star%20this%20repo%20if%20useful%20%E2%AD%90&logo=github-sponsors)](https://github.com/nvbangg/EDAns)　[![GitHub](https://img.shields.io/badge/nvbangg-black?style=social&logo=github)](https://github.com/nvbangg)<br>
+👉 [Other Tools](https://github.com/nvbangg/nvbangg-projects#ptit)
 
 </div> 
 
